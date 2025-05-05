@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,6 +21,11 @@ const Profile = () => {
   const { user, logout } = useAuth();
   const [uploads, setUploads] = useState<Upload[]>([]);
   
+  // اطلاعات گیمینگ کاربر - مقادیر پیش‌فرض
+  const [heroName, setHeroName] = useState("شوالیه تاریکی");
+  const [gameRealm, setGameRealm] = useState("سرزمین آشوب");
+  const [gameRace, setGameRace] = useState("انسان");
+  
   useEffect(() => {
     if (!user) {
       navigate("/login");
@@ -35,6 +40,13 @@ const Profile = () => {
     if (currentUser && currentUser.uploads) {
       setUploads(currentUser.uploads);
     }
+    
+    // بازیابی اطلاعات گیمینگ کاربر از localStorage اگر موجود باشد
+    if (currentUser && currentUser.gameProfile) {
+      setHeroName(currentUser.gameProfile.heroName || "شوالیه تاریکی");
+      setGameRealm(currentUser.gameProfile.gameRealm || "سرزمین آشوب");
+      setGameRace(currentUser.gameProfile.gameRace || "انسان");
+    }
   }, [user, navigate]);
   
   const handleLogout = () => {
@@ -44,6 +56,34 @@ const Profile = () => {
       description: "با موفقیت از حساب کاربری خود خارج شدید."
     });
     navigate("/login");
+  };
+  
+  // ذخیره اطلاعات گیمینگ کاربر
+  const saveGameProfile = () => {
+    if (!user) return;
+    
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const userIndex = users.findIndex((u: any) => u.id === user.id);
+    
+    if (userIndex !== -1) {
+      // اگر gameProfile موجود نیست، آن را ایجاد کنید
+      if (!users[userIndex].gameProfile) {
+        users[userIndex].gameProfile = {};
+      }
+      
+      // به‌روزرسانی اطلاعات گیمینگ
+      users[userIndex].gameProfile.heroName = heroName;
+      users[userIndex].gameProfile.gameRealm = gameRealm;
+      users[userIndex].gameProfile.gameRace = gameRace;
+      
+      // ذخیره اطلاعات به‌روزرسانی شده
+      localStorage.setItem("users", JSON.stringify(users));
+      
+      toast({
+        title: "ذخیره موفق",
+        description: "اطلاعات گیمینگ شما با موفقیت ذخیره شد."
+      });
+    }
   };
   
   const formatFileSize = (bytes: number) => {
@@ -75,6 +115,59 @@ const Profile = () => {
               <p><span className="font-semibold ml-2">ایمیل:</span> {user?.email}</p>
               <Button variant="destructive" className="mt-4" onClick={handleLogout}>
                 خروج از حساب کاربری
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* کارت جدید برای اطلاعات گیمینگ */}
+        <Card className="mb-8">
+          <CardHeader className="text-right">
+            <CardTitle>اطلاعات گیمینگ</CardTitle>
+            <CardDescription>
+              اطلاعات شخصیت بازی شما
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div>
+                <label htmlFor="heroName" className="block text-sm font-medium text-right mb-1">
+                  نام هیرو:
+                </label>
+                <input
+                  id="heroName"
+                  className="w-full p-2 border rounded-md text-right"
+                  value={heroName}
+                  onChange={(e) => setHeroName(e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="gameRealm" className="block text-sm font-medium text-right mb-1">
+                  ریلم بازی:
+                </label>
+                <input
+                  id="gameRealm"
+                  className="w-full p-2 border rounded-md text-right"
+                  value={gameRealm}
+                  onChange={(e) => setGameRealm(e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="gameRace" className="block text-sm font-medium text-right mb-1">
+                  ریس بازی:
+                </label>
+                <input
+                  id="gameRace"
+                  className="w-full p-2 border rounded-md text-right"
+                  value={gameRace}
+                  onChange={(e) => setGameRace(e.target.value)}
+                />
+              </div>
+              
+              <Button className="mt-2" onClick={saveGameProfile}>
+                ذخیره اطلاعات گیمینگ
               </Button>
             </div>
           </CardContent>

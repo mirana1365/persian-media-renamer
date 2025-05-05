@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -11,6 +12,7 @@ const Navbar = () => {
     <nav className="bg-card shadow-sm border-b">
       <div className="container max-w-4xl py-4 px-4 sm:px-6 flex justify-between items-center">
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           {user ? (
             <>
               <Button variant="ghost" asChild>

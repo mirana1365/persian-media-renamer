@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/contexts/AuthContext";
+import Navbar from "@/components/Navbar";
 
 interface Upload {
   id: string;
@@ -94,6 +95,7 @@ const Profile = () => {
   
   return (
     <div className="min-h-screen bg-background p-4">
+      <Navbar />
       <div className="container max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <Button variant="outline" onClick={() => navigate("/")}>
@@ -182,26 +184,28 @@ const Profile = () => {
           </CardHeader>
           <CardContent>
             {uploads.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right">نام فایل</TableHead>
-                    <TableHead className="text-right">نوع</TableHead>
-                    <TableHead className="text-right">حجم</TableHead>
-                    <TableHead className="text-right">تاریخ آپلود</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {uploads.map((upload) => (
-                    <TableRow key={upload.id}>
-                      <TableCell className="text-right font-medium">{upload.fileName}</TableCell>
-                      <TableCell className="text-right">{upload.fileType}</TableCell>
-                      <TableCell className="text-right">{formatFileSize(upload.fileSize)}</TableCell>
-                      <TableCell className="text-right">{upload.uploadDate}</TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-right">نام فایل</TableHead>
+                      <TableHead className="text-right">نوع</TableHead>
+                      <TableHead className="text-right">حجم</TableHead>
+                      <TableHead className="text-right">تاریخ آپلود</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {uploads.map((upload) => (
+                      <TableRow key={upload.id}>
+                        <TableCell className="text-right font-medium">{upload.fileName}</TableCell>
+                        <TableCell className="text-right">{upload.fileType}</TableCell>
+                        <TableCell className="text-right">{formatFileSize(upload.fileSize)}</TableCell>
+                        <TableCell className="text-right">{upload.uploadDate}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 هنوز هیچ فایلی آپلود نکرده‌اید.

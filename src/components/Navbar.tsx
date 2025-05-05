@@ -24,7 +24,7 @@ const Navbar = () => {
           )}
         </div>
         <Link to="/" className="text-xl font-bold text-primary">
-          سامانه آپلود فایل
+          Transaction House
         </Link>
       </div>
     </nav>

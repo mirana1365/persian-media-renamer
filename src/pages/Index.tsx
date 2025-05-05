@@ -108,7 +108,7 @@ const Index = () => {
       <div className="container max-w-4xl py-8 px-4 sm:px-6">
         <div className="text-right mb-8">
           <h1 className="text-3xl font-bold text-primary">
-            سامانه آپلود فایل
+            Transaction House
           </h1>
           <p className="text-muted-foreground mt-2">
             ویدئوها و تصاویر خود را آپلود کنید و آن‌ها را با نام دلخواه ذخیره کنید

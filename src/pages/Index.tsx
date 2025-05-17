@@ -140,7 +140,10 @@ const Index = () => {
                 >
                   حذف همه
                 </Button>
-                <Button onClick={handleSaveFiles}>
+                <Button 
+                  onClick={handleSaveFiles}
+                  disabled={selectedFiles.length === 0}
+                >
                   ذخیره فایل‌ها
                 </Button>
               </div>

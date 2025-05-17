@@ -10,6 +10,7 @@ interface FileUploaderProps {
 
 const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [isError, setIsError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -27,22 +28,32 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
     e.preventDefault();
     setIsDragging(false);
     
-    if (e.dataTransfer.files) {
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const files = Array.from(e.dataTransfer.files);
       const validFiles = validateFiles(files);
       if (validFiles.length > 0) {
         onFilesSelected(validFiles);
+        setIsError(false);
+      } else {
+        setIsError(true);
       }
+    } else {
+      setIsError(true);
     }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
       const validFiles = validateFiles(files);
       if (validFiles.length > 0) {
         onFilesSelected(validFiles);
+        setIsError(false);
+      } else {
+        setIsError(true);
       }
+    } else {
+      setIsError(true);
     }
   };
 
@@ -70,7 +81,7 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
   return (
     <div
       className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-        isDragging ? "border-primary bg-primary/5" : "border-gray-300 hover:border-primary/50"
+        isDragging ? "border-primary bg-primary/5" : isError ? "border-destructive" : "border-gray-300 hover:border-primary/50"
       }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -83,6 +94,7 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
         className="hidden"
         ref={fileInputRef}
         onChange={handleFileInputChange}
+        required
       />
       
       <div className="flex flex-col items-center justify-center space-y-4">
@@ -95,6 +107,11 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
           <p className="text-sm text-muted-foreground">
             فایل‌های عکس و ویدئو را اینجا رها کنید یا روی دکمه کلیک کنید
           </p>
+          {isError && (
+            <p className="text-sm text-destructive font-medium">
+              انتخاب حداقل یک فایل ضروری است
+            </p>
+          )}
         </div>
         
         <div className="flex gap-2 items-center">
@@ -108,6 +125,7 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
         <Button 
           onClick={handleButtonClick}
           className="mt-4"
+          variant={isError ? "destructive" : "default"}
         >
           انتخاب فایل‌ها
         </Button>

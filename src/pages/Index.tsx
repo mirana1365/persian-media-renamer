@@ -1,17 +1,26 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import FileUploader from "@/components/FileUploader";
 import FilePreview from "@/components/FilePreview";
 import RenameField from "@/components/RenameField";
 import Navbar from "@/components/Navbar";
+import { saveFile } from "@/utils/fileUtils";
 
 const Index = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [customName, setCustomName] = useState("");
   const { toast } = useToast();
   const [uploads, setUploads] = useState<any[]>([]);
+
+  // Load existing uploads from localStorage on component mount
+  useEffect(() => {
+    const storedUploads = localStorage.getItem("uploads");
+    if (storedUploads) {
+      setUploads(JSON.parse(storedUploads));
+    }
+  }, []);
 
   const handleFilesSelected = (files: File[]) => {
     setSelectedFiles(prev => [...prev, ...files]);
@@ -22,7 +31,7 @@ const Index = () => {
     });
   };
 
-  const handleSaveFiles = () => {
+  const handleSaveFiles = async () => {
     if (selectedFiles.length === 0) {
       toast({
         title: "خطا",
@@ -32,32 +41,58 @@ const Index = () => {
       return;
     }
 
-    // Create new uploads with metadata
-    const newUploads = selectedFiles.map(file => ({
-      id: Date.now().toString() + Math.random().toString(36).substring(2, 15),
-      fileName: customName || file.name,
-      fileType: file.type,
-      fileSize: file.size,
-      uploadDate: new Date().toLocaleDateString("fa-IR")
-    }));
-    
-    // Add to all uploads
-    const allUploads = [...uploads, ...newUploads];
-    setUploads(allUploads);
-    
-    // Store uploads in localStorage
-    localStorage.setItem("uploads", JSON.stringify(allUploads));
-    
-    toast({
-      title: "فایل‌ها ذخیره شدند",
-      description: customName 
-        ? `فایل‌ها با نام "${customName}" ذخیره شدند.`
-        : "فایل‌ها با نام اصلی ذخیره شدند.",
-    });
-    
-    // Reset form
-    setSelectedFiles([]);
-    setCustomName("");
+    try {
+      // Process each file and save them to appropriate directories
+      const newUploads = await Promise.all(selectedFiles.map(async (file, index) => {
+        const fileType = file.type.split('/')[0];
+        const folderPath = fileType === 'image' ? 'uploads/image' : 'uploads/video';
+        
+        // Generate filename
+        const fileExtension = file.name.split('.').pop();
+        const fileName = customName 
+          ? `${customName}${selectedFiles.length > 1 ? `_${index + 1}` : ''}.${fileExtension}`
+          : file.name;
+        
+        // Save the file to the appropriate folder
+        const filePath = `${folderPath}/${fileName}`;
+        await saveFile(file, filePath);
+        
+        // Return metadata for storage
+        return {
+          id: Date.now().toString() + Math.random().toString(36).substring(2, 15),
+          fileName: fileName,
+          filePath: filePath,
+          fileType: file.type,
+          fileSize: file.size,
+          uploadDate: new Date().toLocaleDateString("fa-IR")
+        };
+      }));
+      
+      // Add to all uploads
+      const allUploads = [...uploads, ...newUploads];
+      setUploads(allUploads);
+      
+      // Store uploads in localStorage
+      localStorage.setItem("uploads", JSON.stringify(allUploads));
+      
+      toast({
+        title: "فایل‌ها ذخیره شدند",
+        description: customName 
+          ? `فایل‌ها با نام "${customName}" در پوشه‌های مناسب ذخیره شدند.`
+          : "فایل‌ها با نام اصلی در پوشه‌های مناسب ذخیره شدند.",
+      });
+      
+      // Reset form
+      setSelectedFiles([]);
+      setCustomName("");
+    } catch (error) {
+      console.error("Error saving files:", error);
+      toast({
+        title: "خطا در ذخیره فایل‌ها",
+        description: "مشکلی در ذخیره‌سازی فایل‌ها رخ داده است.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleReset = () => {

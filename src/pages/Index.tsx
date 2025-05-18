@@ -42,20 +42,16 @@ const Index = () => {
     }
 
     try {
-      // Process each file and save them to appropriate directories
+      // Process each file and save them
       const newUploads = await Promise.all(selectedFiles.map(async (file, index) => {
-        const fileType = file.type.split('/')[0];
-        const folderPath = fileType === 'image' ? 'uploads/image' : 'uploads/video';
-        
         // Generate filename
         const fileExtension = file.name.split('.').pop();
         const fileName = customName 
           ? `${customName}${selectedFiles.length > 1 ? `_${index + 1}` : ''}.${fileExtension}`
           : file.name;
         
-        // Save the file to the appropriate folder
-        const filePath = `${folderPath}/${fileName}`;
-        await saveFile(file, filePath);
+        // Save the file to the uploads folder at project root
+        await saveFile(file, fileName);
         
         // Download the file to user's system with the custom name
         downloadFile(file, fileName);
@@ -64,7 +60,7 @@ const Index = () => {
         return {
           id: Date.now().toString() + Math.random().toString(36).substring(2, 15),
           fileName: fileName,
-          filePath: filePath,
+          filePath: `./uploads/${fileName}`,
           fileType: file.type,
           fileSize: file.size,
           uploadDate: new Date().toLocaleDateString("fa-IR")
@@ -81,8 +77,8 @@ const Index = () => {
       toast({
         title: "فایل‌ها ذخیره شدند",
         description: customName 
-          ? `فایل‌ها با نام "${customName}" در سیستم شما ذخیره شدند.`
-          : "فایل‌ها با نام اصلی در سیستم شما ذخیره شدند.",
+          ? `فایل‌ها با نام "${customName}" در پوشه ./uploads ذخیره شدند و به سیستم شما دانلود شدند.`
+          : "فایل‌ها با نام اصلی در پوشه ./uploads ذخیره شدند و به سیستم شما دانلود شدند.",
       });
       
       // Reset form

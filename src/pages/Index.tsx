@@ -57,6 +57,9 @@ const Index = () => {
         const filePath = `${folderPath}/${fileName}`;
         await saveFile(file, filePath);
         
+        // Download the file to user's system with the custom name
+        downloadFile(file, fileName);
+        
         // Return metadata for storage
         return {
           id: Date.now().toString() + Math.random().toString(36).substring(2, 15),
@@ -78,8 +81,8 @@ const Index = () => {
       toast({
         title: "فایل‌ها ذخیره شدند",
         description: customName 
-          ? `فایل‌ها با نام "${customName}" در پوشه‌های مناسب ذخیره شدند.`
-          : "فایل‌ها با نام اصلی در پوشه‌های مناسب ذخیره شدند.",
+          ? `فایل‌ها با نام "${customName}" در سیستم شما ذخیره شدند.`
+          : "فایل‌ها با نام اصلی در سیستم شما ذخیره شدند.",
       });
       
       // Reset form
@@ -93,6 +96,27 @@ const Index = () => {
         variant: "destructive",
       });
     }
+  };
+
+  // Function to download file to user's system
+  const downloadFile = (file: File, fileName: string) => {
+    // Create a URL for the file
+    const fileURL = URL.createObjectURL(file);
+    
+    // Create an anchor element and set its attributes
+    const downloadLink = document.createElement('a');
+    downloadLink.href = fileURL;
+    downloadLink.download = fileName; // Set the file name
+    
+    // Append to body, click programmatically, then remove
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    // Clean up the URL object
+    setTimeout(() => {
+      URL.revokeObjectURL(fileURL);
+    }, 100);
   };
 
   const handleReset = () => {

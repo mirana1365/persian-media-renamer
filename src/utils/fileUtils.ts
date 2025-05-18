@@ -4,11 +4,13 @@
  */
 
 /**
- * Saves a file to the specified path
+ * Saves a file to the specified path (simulated in browser)
+ * Note: In a browser context, this only simulates saving to server paths
+ * Actual file downloads happen through the downloadFile function in Index.tsx
  * 
  * @param file - The file to save
- * @param path - The path where the file should be saved
- * @returns Promise that resolves when the file is saved
+ * @param path - The path where the file should be saved (simulation only)
+ * @returns Promise that resolves when the file is processed
  */
 export const saveFile = async (file: File, path: string): Promise<void> => {
   return new Promise((resolve, reject) => {

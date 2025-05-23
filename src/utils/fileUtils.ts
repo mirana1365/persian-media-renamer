@@ -15,8 +15,8 @@
 export const saveFile = async (file: File, fileName: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
-      // In a real server environment, we would save to ./Upload
-      const path = `./Upload/${fileName}`;
+      // In a real server environment, we would save to ./uploads
+      const path = `./uploads/${fileName}`;
       console.log(`File saved to server path: ${path}`);
       
       // In a real implementation, we would use FormData and fetch to send to server

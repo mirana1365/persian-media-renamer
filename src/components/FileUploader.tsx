@@ -28,6 +28,11 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
     e.preventDefault();
     setIsDragging(false);
     
+    toast({
+      title: "فایل‌ها رها شدند",
+      description: "در حال بررسی فایل‌های انتخاب شده...",
+    });
+    
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const files = Array.from(e.dataTransfer.files);
       const validFiles = validateFiles(files);
@@ -39,12 +44,23 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
       }
     } else {
       setIsError(true);
+      toast({
+        title: "خطا در انتخاب فایل",
+        description: "هیچ فایل معتبری یافت نشد.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
+      
+      toast({
+        title: "فایل‌ها انتخاب شدند",
+        description: `${files.length} فایل برای بررسی انتخاب شد.`,
+      });
+      
       const validFiles = validateFiles(files);
       if (validFiles.length > 0) {
         onFilesSelected(validFiles);
@@ -54,6 +70,11 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
       }
     } else {
       setIsError(true);
+      toast({
+        title: "خطا در انتخاب فایل",
+        description: "لطفاً فایل‌هایی را انتخاب کنید.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -64,10 +85,18 @@ const FileUploader = ({ onFilesSelected }: FileUploaderProps) => {
     });
     
     if (validFiles.length !== files.length) {
+      const invalidCount = files.length - validFiles.length;
       toast({
-        title: "خطا در آپلود فایل",
-        description: "فقط فایل‌های عکس و ویدئو پشتیبانی می‌شوند.",
+        title: "هشدار",
+        description: `${invalidCount} فایل نامعتبر حذف شد. فقط فایل‌های عکس و ویدئو پذیرفته می‌شوند.`,
         variant: "destructive",
+      });
+    }
+    
+    if (validFiles.length > 0) {
+      toast({
+        title: "موفق",
+        description: `${validFiles.length} فایل معتبر برای آپلود آماده شد.`,
       });
     }
     

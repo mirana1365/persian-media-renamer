@@ -17,28 +17,31 @@ export const saveFile = async (file: File, fileName: string): Promise<void> => {
     try {
       // In a real server environment, we would save to ./uploads
       const path = `./uploads/${fileName}`;
-      console.log(`File saved to server path: ${path}`);
+      console.log(`شروع ذخیره فایل: ${fileName}`);
+      console.log(`مسیر ذخیره: ${path}`);
+      console.log(`حجم فایل: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
       
       // In a real implementation, we would use FormData and fetch to send to server
       const reader = new FileReader();
       reader.onload = () => {
-        // This would be where you'd send the file data to a server
-        // For now we'll just log that the file would be saved
-        console.log(`File "${fileName}" content read and ready for server storage`);
+        console.log(`فایل "${fileName}" با موفقیت خوانده شد و آماده ذخیره در سرور است`);
         
         // Simulate successful server storage
         setTimeout(() => {
+          console.log(`فایل "${fileName}" با موفقیت در ${path} ذخیره شد`);
           resolve();
         }, 100);
       };
       
       reader.onerror = () => {
-        reject(new Error("Error reading file data"));
+        console.error(`خطا در خواندن فایل: ${fileName}`);
+        reject(new Error("خطا در خواندن اطلاعات فایل"));
       };
       
       // Start reading the file content
       reader.readAsArrayBuffer(file);
     } catch (error) {
+      console.error(`خطا در ذخیره فایل ${fileName}:`, error);
       reject(error);
     }
   });

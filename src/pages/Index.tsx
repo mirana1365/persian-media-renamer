@@ -41,14 +41,22 @@ const Index = () => {
       return;
     }
 
+    // Check if custom name is required and provided
+    if (!customName.trim()) {
+      toast({
+        title: "خطا در نام فایل",
+        description: "لطفاً نام سفارشی برای فایل‌ها وارد کنید.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       // Process each file and save them
       const newUploads = await Promise.all(selectedFiles.map(async (file, index) => {
-        // Generate filename
+        // Generate filename using custom name
         const fileExtension = file.name.split('.').pop();
-        const fileName = customName 
-          ? `${customName}${selectedFiles.length > 1 ? `_${index + 1}` : ''}.${fileExtension}`
-          : file.name;
+        const fileName = `${customName}${selectedFiles.length > 1 ? `_${index + 1}` : ''}.${fileExtension}`;
         
         // Save the file to the uploads folder at project root
         await saveFile(file, fileName);
@@ -73,9 +81,7 @@ const Index = () => {
       
       toast({
         title: "فایل‌ها ذخیره شدند",
-        description: customName 
-          ? `فایل‌ها با نام "${customName}" با موفقیت ذخیره شدند.`
-          : "فایل‌ها با نام اصلی با موفقیت ذخیره شدند.",
+        description: `فایل‌ها با نام "${customName}" با موفقیت ذخیره شدند.`,
       });
       
       // Reset form

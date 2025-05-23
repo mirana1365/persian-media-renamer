@@ -15,10 +15,7 @@
 export const saveFile = async (file: File, fileName: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
-      // In a real server environment, we would save to ./uploads
-      const path = `./uploads/${fileName}`;
       console.log(`شروع ذخیره فایل: ${fileName}`);
-      console.log(`مسیر ذخیره: ${path}`);
       console.log(`حجم فایل: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
       
       // In a real implementation, we would use FormData and fetch to send to server
@@ -28,7 +25,7 @@ export const saveFile = async (file: File, fileName: string): Promise<void> => {
         
         // Simulate successful server storage
         setTimeout(() => {
-          console.log(`فایل "${fileName}" با موفقیت در ${path} ذخیره شد`);
+          console.log(`فایل "${fileName}" با موفقیت ذخیره شد`);
           resolve();
         }, 100);
       };

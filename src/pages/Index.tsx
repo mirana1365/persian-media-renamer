@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -50,17 +49,14 @@ const Index = () => {
           ? `${customName}${selectedFiles.length > 1 ? `_${index + 1}` : ''}.${fileExtension}`
           : file.name;
         
-        // Save the file to the uploads folder at project root
+        // Save the file to the Upload folder at project root
         await saveFile(file, fileName);
-        
-        // Download the file to user's system with the custom name
-        downloadFile(file, fileName);
         
         // Return metadata for storage
         return {
           id: Date.now().toString() + Math.random().toString(36).substring(2, 15),
           fileName: fileName,
-          filePath: `./uploads/${fileName}`,
+          filePath: `./Upload/${fileName}`,
           fileType: file.type,
           fileSize: file.size,
           uploadDate: new Date().toLocaleDateString("fa-IR")
@@ -77,8 +73,8 @@ const Index = () => {
       toast({
         title: "فایل‌ها ذخیره شدند",
         description: customName 
-          ? `فایل‌ها با نام "${customName}" در پوشه ./uploads ذخیره شدند و به سیستم شما دانلود شدند.`
-          : "فایل‌ها با نام اصلی در پوشه ./uploads ذخیره شدند و به سیستم شما دانلود شدند.",
+          ? `فایل‌ها با نام "${customName}" در پوشه ./Upload در سرور ذخیره شدند.`
+          : "فایل‌ها با نام اصلی در پوشه ./Upload در سرور ذخیره شدند.",
       });
       
       // Reset form

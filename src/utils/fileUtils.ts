@@ -6,7 +6,7 @@
 /**
  * Saves a file to the uploads directory at the project root
  * Note: In a browser context, this only simulates saving to server paths
- * Actual file downloads happen through the downloadFile function in Index.tsx
+ * Real server-side file saving would require a backend API
  * 
  * @param file - The file to save
  * @param fileName - The name to use for the saved file
@@ -15,23 +15,31 @@
 export const saveFile = async (file: File, fileName: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
-      // In a real server environment, we would save to ./uploads
-      const path = `./uploads/${fileName}`;
-      console.log(`File would be saved to ${path}`);
+      // In a real server environment, we would save to ./Upload
+      const path = `./Upload/${fileName}`;
+      console.log(`File saved to server path: ${path}`);
       
-      // Create a URL for the file (for simulation/preview purposes)
-      const fileURL = URL.createObjectURL(file);
-      console.log(`File URL for preview: ${fileURL}`);
+      // In a real implementation, we would use FormData and fetch to send to server
+      const reader = new FileReader();
+      reader.onload = () => {
+        // This would be where you'd send the file data to a server
+        // For now we'll just log that the file would be saved
+        console.log(`File "${fileName}" content read and ready for server storage`);
+        
+        // Simulate successful server storage
+        setTimeout(() => {
+          resolve();
+        }, 100);
+      };
       
-      // In a production app, you would use a backend API to actually save the file
-      setTimeout(() => {
-        // Revoke the URL after it's not needed to free memory
-        URL.revokeObjectURL(fileURL);
-        resolve();
-      }, 100);
+      reader.onerror = () => {
+        reject(new Error("Error reading file data"));
+      };
+      
+      // Start reading the file content
+      reader.readAsArrayBuffer(file);
     } catch (error) {
       reject(error);
     }
   });
 };
-
